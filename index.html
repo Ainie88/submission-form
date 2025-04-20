@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Limited Submission Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      text-align: center;
+    }
+    #status {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    iframe {
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="status">Checking available slots...</div>
+
+  <iframe id="jotform-frame" src="https://form.jotform.com/250981796730468" width="100%" height="900"></iframe>
+
+  <script>
+    const formID = '250981796730468';
+    const apiKey = '001b3318e279f7319dd8d91921a58aae'; 
+    const maxSubmissions = 30;
+
+    async function checkSlots() {
+      try {
+        const response = await fetch(`https://api.jotform.com/form/${formID}/submissions?apiKey=${apiKey}`);
+        const data = await response.json();
+        const currentCount = data.content.length;
+        const slotsLeft = maxSubmissions - currentCount;
+
+        const status = document.getElementById('status');
+        const form = document.getElementById('jotform-frame');
+
+        if (slotsLeft <= 0) {
+          status.textContent = "Oops! Submissions are now closed. Thanks so much for your interest!";
+          form.style.display = "none";
+        } else {
+          status.textContent = `Hurry! Only ${slotsLeft} slot(s) left.`;
+        }
+      } catch (err) {
+        document.getElementById('status').textContent = "Error loading form status.";
+        console.error(err);
+      }
+    }
+
+    checkSlots();
+  </script>
+
+</body>
+</html>
